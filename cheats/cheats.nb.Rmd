@@ -1,0 +1,168 @@
+---
+title: "Cheats JB"
+author: "Juan Bizzotto"
+date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
+output:
+
+  html_document:
+    df_print: paged
+editor_options:
+  markdown:
+    wrap: 72
+---
+
+<!-- This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code.  -->
+
+<!-- Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*.  -->
+
+<!-- ```{r} -->
+
+<!-- plot(cars) -->
+
+<!-- ``` -->
+
+<!-- Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*. -->
+
+<!-- When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file). -->
+
+<!-- The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed. -->
+
+```{r include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+
+# Programación y data wrangling
+
+**Pegar en clipboard** :
+
+<https://statisticsglobe.com/copy-data-frame-clipboard-r>
+
+```{r eval=FALSE}
+#esto es para que no corro nninguno de los codigos que están en los chunks
+clipr::write_clip(dato.a.pegar)
+```
+
+**Que la funcion apple me devuelva un dataframe:**
+
+dataframe - R: apply-like function that returns a data frame? - Stack
+Overflow:
+<https://stackoverflow.com/questions/36982755/r-apply-like-function-that-returns-a-data-frame>
+
+1.  **apply**: `as.data.frame(apply(iris[, 1:4], 2, summary))`
+
+2.  **sapply**: `as.data.frame(sapply(iris[, 1:4], summary))`
+
+3.  **lapply**: `do.call(cbind, lapply(iris[, 1:4], summary))`
+
+**Cambiar los valores de una columna en base a una tabla de
+equivalencias:**
+
+Recode values based on look up table with dplyr (R) - Stack Overflow:
+<https://stackoverflow.com/questions/66231321/recode-values-based-on-look-up-table-with-dplyr-r>
+
+```{r eval=FALSE}
+# You can use recode with unquote splicing (!!!) on a named vector
+
+library(dplyr)
+
+# vector of new IDs
+recode_vec <- recode_table$new
+# named with old IDs
+names(recode_vec) <- recode_table$old
+
+data %>% 
+  mutate(id = recode(id, !!!recode_vec))
+```
+
+# Heatmaps
+
+**crear heatmap con ggplot y geom_tiles**: ES MUY IMPORTANTE COMO SE
+REORDENA LA DATA
+
+r - Create heatmap with values from matrix in ggplot2 - Stack Overflow:
+<https://stackoverflow.com/questions/14290364/create-heatmap-with-values-from-matrix-in-ggplot2>
+
+# GGplot
+
+**eje x arriba, on top:**
+
+r - Putting x-axis at top of ggplot2 chart - Stack Overflow:
+<https://stackoverflow.com/questions/26838005/putting-x-axis-at-top-of-ggplot2-chart>
+
+```{r eval=FALSE}
+scale_x_discrete(position = "top") 
+```
+
+# cambios nombres de genes
+
+## mapIds
+
+cambiar nombres genes, convertir nombres mapear codigos ID:
+<https://www.gungorbudak.com/blog/2018/08/07/convert-gene-symbols-to-entrez-ids-in-r/>
+
+```{r eval=FALSE}
+mapIds(org.Hs.eg.db, listanombres, 'loquequiero', 'loquetengo')
+
+AnnotationDbi::columns(org.Hs.eg.db::org.Hs.eg.db) # para ver las posibilidades
+
+nuevos=AnnotationDbi::mapIds(org.Hs.eg.db::org.Hs.eg.db,
+                      genes.que.tengo,
+                      'ENSEMBL', # lo que quiero
+                      'SYMBOL',  # lo que tengo,
+                      multiVals = "first")
+```
+
+## biomaRt
+
+**atributos duplicados**, el mismo id me da mas de un resultado
+
+-   <https://support.bioconductor.org/p/72927/>
+
+-   <https://www.biostars.org/p/9481514/>
+
+**genes homologos humano raton:** esto lo explico muy bien en un mail
+que le mande a pablo sanchis, usando biomart
+
+**Problemas de conexion de biomart:**
+
+**B**ioMart: connection fails: <https://www.biostars.org/p/315520/>
+
+biomaRt server error, and mirrors do not help:
+<https://support.bioconductor.org/p/9143914/>
+
+**buenas referencias para biomart:**
+
+Accessing Ensembl annotation with biomaRt :
+<https://bioconductor.org/packages/release/bioc/vignettes/biomaRt/inst/doc/accessing_ensembl.html>
+
+how to retrieve mouse (mm10) gene information from Ensemble using
+Biomart in R :<https://www.biostars.org/p/147351/>
+
+# Quarto
+
+## agregar una tabla
+
+Si al tengo en el enviroment, y quiero que me la renderice, las opciones
+son las que estan acá
+
+-   r - Convert dataframe to markdown table in Quarto - Stack Overflow
+    <https://stackoverflow.com/questions/76135432/convert-dataframe-to-markdown-table-in-quarto>
+
+-   r - Using Markdown formatting in table using kable in quarto - Stack
+    Overflow
+    <https://stackoverflow.com/questions/72516135/using-markdown-formatting-in-table-using-kable-in-quarto>
+
+-   Quarto -- Tables <https://quarto.org/docs/authoring/tables.html>
+
+lo de **simplemardown** no lo pude intalar, asique no lo prome
+el metodo de **knit** parece andar bien, pero despues la tabla me queda demasiado grande para la slida. La colución rapida que aplica fue achicar la letra
+
+```{r eval=FALSE}
+library(knitr)
+library(kableExtra)
+
+kable(tabla) %>%
+  kable_styling(font_size = 15)
+```
+
