@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/1143382/8628b40b025b46138aae7e3e7ba485bb
+bundleId: https://api.rpubs.com/api/v1/document/1143382/8628b40b025b46138aae7e3e7ba485bb
+url: http://rpubs.com/jbzt/1143382
+version: 1

@@ -31,7 +31,6 @@ editor_options:
 knitr::opts_chunk$set(eval = FALSE)
 ```
 
-
 # Programación y data wrangling
 
 **Pegar en clipboard** :
@@ -84,6 +83,150 @@ r - Create heatmap with values from matrix in ggplot2 - Stack Overflow:
 <https://stackoverflow.com/questions/14290364/create-heatmap-with-values-from-matrix-in-ggplot2>
 
 # GGplot
+
+### volcano plot en ggplot
+#### referencias:
+* r_tips/tutorials/dv-volcano_plots_with_ggplot/dv-volcano_plots_with_ggplot.md at master · erikaduan/r_tips
+https://github.com/erikaduan/r_tips/blob/master/tutorials/dv-volcano_plots_with_ggplot/dv-volcano_plots_with_ggplot.md
+
+* Visualization of Volcano Plots in R - Samuel's Blog
+https://samdsblog.netlify.app/post/visualizing-volcano-plots-in-r/
+
+Ejemplo basado en la referencia de **samdsblog**
+
+
+```{r eval=FALSE}
+# data inventada
+grafico=structure(list(nombre = c("Angiopoetin.2", "G.CSF", "SCF", "GM.CSF", 
+"Tenascin.C", "IFN.gamma", "BMP.9", "IL.1.alpha", "Leptin", "IL.1.beta", 
+"IL.2", "TRAIL", "IL.4", "sIL.6R", "IL.5", "EGF", "IL.6", "Endoglin", 
+"IL.7", "Endothelin.1", "IL.9", "FGF.2", "Dkk.1", "IL.10", "HGF", 
+"IL.12.p40", "IL.12.p70", "Periostin", "PIGF.2", "IL.13", "IL.15", 
+"Galectin.1", "IL.17", "IP.10", "KC", "MCP.1", "MIP.1.alpha", 
+"SDF.1", "MIP.1.beta", "Osteonectin", "FGF.23", "MIP.2", "Galectin.3", 
+"RANTES", "VEGF", "TNF.alpha", "HGFR", "Vitronectin", "IGF.1", 
+"MMP.2", "Osteopontin", "MMP.9", "Axl", "TGFbeta.1", "TGFbeta.3", 
+"TGFbeta.2"), p.val = c(0.839225653739129, 0.590331216274014, 
+0.110405888258566, 0.726427295531733, 0.712632870904764, 0.609797293096357, 
+0.791116679604495, 0.924051281290938, 0.625065524381482, 0.164216632209828, 
+0.0374188783270202, 0.253926026382899, 0.00502033890552983, 0.0444988131513101, 
+0.500973981436344, 0.135623397748239, 0.385677256244151, 0.0592602010981502, 
+0.26372607315013, 0.741082397494451, 0.0473399025871028, 0.0807895503656673, 
+0.0460078024864051, 0.252268947025709, 0.0189131478245569, 0.108798850299131, 
+0.0265230280265309, 0.0568692491885416, 0.172952122260311, 0.033878092031299, 
+0.0636308655535189, 0.647343978309613, 0.24783807917475, 0.00461818386311467, 
+0.6805106862445, 0.765356450812079, 0.606535475416779, 0.0042714310750879, 
+0.141301107979996, 0.0678153116263779, 0.00360003777822301, 0.269324261087968, 
+0.143996669034468, 0.000172278830267783, 0.0526939946746104, 
+0.213647361245845, 0.958857640884594, 0.91020693922827, 0.647411858024726, 
+0.218442725468614, 0.187707075647927, 0.162796779100887, 0.27569271077264, 
+0.767878211810357, 0.565229408870377, 0.933523072679823), fold.change = c(1.14462198648667, 
+1.63943467769735, 0.672828326984325, 1.54121687929343, 0.927610425019125, 
+1.28894866621834, 0.901481481481481, 1.02705627705628, 1.12426708672442, 
+0.412400225751834, 1.31049679487179, 0.64589759407773, 0.434742220157919, 
+0.503091983477087, 1.39625167336011, 0.523105380321981, 0.81758345086977, 
+0.427227147661266, 0.413375113383359, 0.969568892645816, 4.68827872634979, 
+0.475721990010142, 0.27665161539576, 0.585392427720923, 0.337235750602087, 
+0.579612685113732, 0.378520604802846, 2.32735849056604, 0.569377990430622, 
+0.598081952920663, 0.173809813709972, 1.07024567788899, 0.625175808720112, 
+0.346467697579009, 0.855351976856316, 0.892391398220917, 0.882838621630843, 
+0.527358897027143, 0.541313320825516, 1.80747522889753, 0.560338335989353, 
+0.547165155160713, 0.755162030398624, 0.336429739414814, 0.0683343502135448, 
+0.540880503144654, 0.967997236542355, 1.05568057686929, 0.84081690089142, 
+1.36532656301803, 1.65575498433849, 0.248127204693699, 0.658866602992678, 
+1.46657726598184, 1.65849949307198, 1.07646565951504), Expression = c("Unchanged", 
+"Unchanged", "Unchanged", "Unchanged", "Unchanged", "Unchanged", 
+"Unchanged", "Unchanged", "Unchanged", "Unchanged", "Up-regulated", 
+"Unchanged", "Down-regulated", "Down-regulated", "Unchanged", 
+"Unchanged", "Unchanged", "Unchanged", "Unchanged", "Unchanged", 
+"Up-regulated", "Unchanged", "Down-regulated", "Unchanged", "Down-regulated", 
+"Unchanged", "Down-regulated", "Unchanged", "Unchanged", "Down-regulated", 
+"Unchanged", "Unchanged", "Unchanged", "Down-regulated", "Unchanged", 
+"Unchanged", "Unchanged", "Down-regulated", "Unchanged", "Unchanged", 
+"Down-regulated", "Unchanged", "Unchanged", "Down-regulated", 
+"Unchanged", "Unchanged", "Unchanged", "Unchanged", "Unchanged", 
+"Unchanged", "Unchanged", "Unchanged", "Unchanged", "Unchanged", 
+"Unchanged", "Unchanged")), class = "data.frame", row.names = c(NA, 
+-56L))
+```
+
+```{r}
+library(tidyverse)
+library(ggrepel)
+
+# para colorear segun el cambio
+grafico <- grafico %>% 
+  mutate(
+    Expression = case_when(fold.change > 1 & p.val <= 0.05 ~ "Up-regulated",
+                           fold.change < 1 & p.val <= 0.05 ~ "Down-regulated",
+                           TRUE ~ "Unchanged")
+  )
+
+top=10
+# paraa agregar labels
+top_genes <- bind_rows(
+  grafico %>% 
+    filter(Expression == 'Up-regulated'),
+  grafico %>% 
+    filter(Expression == 'Down-regulated'),
+  grafico %>% 
+    filter(Expression == 'Unchanged') %>% 
+    arrange(desc(abs(log2(fold.change)))) %>% 
+    head(top),
+  grafico %>% 
+    filter(Expression == 'Unchanged') %>% 
+    arrange(p.val) %>% 
+    head(top)
+)
+
+
+# en caso de tener labels repetidas
+top_genes=top_genes[!duplicated(top_genes$nombre),]
+
+# graficar
+ggplot(grafico, aes(x=log2(fold.change), y=-log10(p.val)))+
+  geom_point()+
+  # geom_vline(xintercept = c(-0.6, 0.6), col = "gray", linetype = 'dashed') +
+  geom_vline(xintercept = 0, col = "gray", linetype = 'dashed') +
+  geom_hline(yintercept = -log10(0.05), col = "gray", linetype = 'dashed') + 
+  geom_point(aes(color = Expression))  +
+  xlab(expression("log"[2]*"FC")) + 
+  ylab(expression("-log"[10]*"p-val"))+
+  scale_color_manual(values = c("dodgerblue3", "gray50", "firebrick3")) +
+  guides(colour = guide_legend(override.aes = list(size=1.5))) +
+  geom_label_repel(data = top_genes,
+                   mapping = aes(x=log2(fold.change), y=-log10(p.val), label=nombre),
+                   size = 3)+
+  ggtitle("Right: Tratamiento vs Control")
+```
+
+
+
+
+### grafico con perros gatos cats dogs
+Gatos en ggplot2 con ggcats | R CHARTS
+https://r-charts.com/es/miscelanea/ggcats/
+
+
+### asignar colores vector con nombres / named color / named vector
+
+para evitar cierta aleatoriedad de la hora de agregar colores a factores
+o caracteres, esta bueno directamente hacer un vetor con nombres que
+denpues matchee nombre a color
+
+-   stat.ubc.ca/\~jenny/STAT545A/block17_colorsGgplot2Qualitative.html
+    <https://www.stat.ubc.ca/~jenny/STAT545A/block17_colorsGgplot2Qualitative.html>
+-   r - Can someone explain the behaviour of named vectors in manual
+    ggplot scales? - Stack Overflow:
+    <https://stackoverflow.com/questions/40426663/can-someone-explain-the-behaviour-of-named-vectors-in-manual-ggplot-scales>
+-   Using Named Colors with ggplot2 - John Quensen:
+    <https://john-quensen.com/graphics/named-colors-with-ggplot2/>
+-   An example of using a named color vector to set colors in ggplot2:
+    <https://gist.github.com/mmparker/6315074>
+-   r - ggplot2: Fix colors to factor levels - Stack Overflow:
+    <https://stackoverflow.com/questions/43440068/ggplot2-fix-colors-to-factor-levels>
+-   Custom colour palettes for {ggplot2} \| R-bloggers:
+    <https://www.r-bloggers.com/2022/06/custom-colour-palettes-for-ggplot2/>
 
 **eje x arriba, on top:**
 
@@ -155,8 +298,9 @@ son las que estan acá
 
 -   Quarto -- Tables <https://quarto.org/docs/authoring/tables.html>
 
-lo de **simplemardown** no lo pude intalar, asique no lo prome
-el metodo de **knit** parece andar bien, pero despues la tabla me queda demasiado grande para la slida. La colución rapida que aplica fue achicar la letra
+lo de **simplemardown** no lo pude intalar, asique no lo prome el metodo
+de **knit** parece andar bien, pero despues la tabla me queda demasiado
+grande para la slida. La colución rapida que aplica fue achicar la letra
 
 ```{r eval=FALSE}
 library(knitr)
@@ -166,3 +310,31 @@ kable(tabla) %>%
   kable_styling(font_size = 15)
 ```
 
+# MArkdown
+
+### no evaluar los chunks
+
+r - Is there a global command line knit option as eval=FALSE for all
+chunks? - Stack Overflow
+<https://stackoverflow.com/questions/68031768/is-there-a-global-command-line-knit-option-as-eval-false-for-all-chunks>
+
+```{r}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+### agregar fecha
+
+agregar la fecha, date, r - YAML current date in rmarkdown - Stack
+Overflow
+<https://stackoverflow.com/questions/23449319/yaml-current-date-in-rmarkdown>
+
+4.8 Update the date automatically \| R Markdown Cookbook
+<https://bookdown.org/yihui/rmarkdown-cookbook/update-date.html>
+
+ejemplos
+
+```{r}
+date: "`r Sys.Date()`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
+```

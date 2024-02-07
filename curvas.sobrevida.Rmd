@@ -1,0 +1,266 @@
+---
+title: "Curvas de sobrevida"
+author: "JB"
+date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    df_print: paged
+---
+
+## recordatorios importantes
+* ojo el orden de los factores que estratifican
+* evento es mejor codificarlo numerico 0 - 1
+
+
+## referencias clave:
+Survival Analysis Basics - Easy Guides - Wiki - STHDA
+http://www.sthda.com/english/wiki/survival-analysis-basics
+
+Cox Proportional-Hazards Model - Easy Guides - Wiki - STHDA
+http://www.sthda.com/english/wiki/cox-proportional-hazards-model
+
+survminer R package: Survival Data Analysis and Visualization - Easy Guides - Wiki - STHDA
+http://www.sthda.com/english/wiki/survminer-r-package-survival-data-analysis-and-visualization
+
+Drawing Survival Curves Using ggplot2 — ggsurvplot • survminer
+http://rpkgs.datanovia.com/survminer/reference/ggsurvplot.html
+
+## Problemas frecuentes
+r - How to remove automated "strata"-text in ggsurvplot legend? - Stack Overflow
+https://stackoverflow.com/questions/59574997/how-to-remove-automated-strata-text-in-ggsurvplot-legend
+
+r - Remove variable name from legend in ggsurvplot - Stack Overflow
+https://stackoverflow.com/questions/61747613/remove-variable-name-from-legend-in-ggsurvplot
+
+
+## grafico basico custom
+
+```{r}
+library("survival")
+library("survminer")
+datos=lung
+
+fit <- survfit(Surv(time, status) ~ sex, data = lung)
+
+ggsurvplot(fit,
+           break.x.by = 6,    
+           xlab="Time in months",
+           pval = T, 
+           ylab="Overall survival",
+           surv.scale="percent",
+           tables.y.text = FALSE,
+           ggtheme = theme_bw(),
+           legend.title="Group", # aca tambien podria poner "" si quiero sacar ese titulo
+           # Add risk table
+           risk.table = TRUE,
+           tables.height = 0.2,
+           tables.theme = theme_cleantable(),
+           risk.table.col = "strata", # esto hace que los numeros de la tabla sean del mismo color que las lineas
+           risk.table.y.text = FALSE,
+)
+
+
+
+```
+
+
+
+
+
+## funciones utiles
+
+```{r}
+
+
+# funcion extraer valores interesantes de un coxph
+extraer.interesantes.coxph=function(ajuste.cox){
+  x=summary(ajuste.cox)
+  HR=x$coefficients[2]
+  p.value=x$coefficients[5]
+  li=x$conf.int[3]
+  ls=x$conf.int[4]
+  c.index=as.numeric(x$concordance[1])
+  log.rank=x$sctest[[3]]
+  salida=list(HR=HR,p.value=p.value,li=li,ls=ls,c.index=c.index, log.rank=log.rank)
+  return(salida)
+}
+```
+
+
+
+## agregar valores estadisticos
+
+```{r}
+valores.stat=extraer.interesantes.coxph(coxph(Surv(time, status) ~ sex, data = lung))
+
+texto=paste("Cox HR: ",round(valores.stat$HR,2),"\n",
+            "Cox p.val: ",round(valores.stat$p.value,4),"\n",
+            "Log-rank p.val:",round(valores.stat$log.rank,4), sep="" )
+texto
+
+plot=ggsurvplot(fit,
+           break.x.by = 6,    
+           xlab="Time in months",
+           ylab="Overall survival",
+           pval = F,
+           surv.scale="percent",
+           tables.y.text = FALSE,
+           ggtheme = theme_bw(),
+           legend.title="Group",
+           # Add risk table
+           risk.table = TRUE,
+           tables.height = 0.2,
+           tables.theme = theme_cleantable(),
+           # risk.table.col = "strata", # esto hace que los numeros de la tabla sean del mismo color que las lineas
+           risk.table.y.text = FALSE
+)
+
+plot$plot= plot$plot + 
+  ggplot2::annotate("text", x = 0, y = 0.25, label = texto, size = 4, hjust=0, vjust=1)
+
+plot
+```
+
+## emprolojar etiquetas
+me molesta que quede sex=1 y sex=2
+basado en :
+r - Remove variable name from legend in ggsurvplot - Stack Overflow
+https://stackoverflow.com/questions/61747613/remove-variable-name-from-legend-in-ggsurvplot
+
+```{r}
+
+# mnodifico el elemento fit, que es la base del grafico
+names(fit$strata)
+x=paste0(as.character(fit$call$formula[[3]]),"=")
+names(fit$strata) <- gsub(x, "", names(fit$strata))
+names(fit$strata)
+
+
+# despues grafico 
+
+ggsurvplot(fit) # basico
+
+# mimo grafico que antes
+
+
+plot=ggsurvplot(fit,
+           break.x.by = 6,    
+           xlab="Time in months",
+           ylab="Overall survival",
+           surv.scale="percent",
+           tables.y.text = FALSE,
+           ggtheme = theme_bw(),
+           legend.title="Group",
+           # Add risk table
+           risk.table = TRUE,
+           tables.height = 0.2,
+           tables.theme = theme_cleantable(),
+           # risk.table.col = "strata", # esto hace que los numeros de la tabla sean del mismo color que las lineas
+           risk.table.y.text = FALSE
+)
+
+plot$plot= plot$plot + 
+  ggplot2::annotate("text", x = 0, y = 0.25, label = texto, size = 4, hjust=0, vjust=1)
+
+plot
+```
+
+## agregar colores
+se puede hacer desde la pallete, ya sea poneindo colores a mano, o eligiendo la paleta (wes anderson, simpsons, etc). Está muy bien descript en la bibliografía
+
+## agregar paleta custom con named vector
+esta es una funcion bastate util que me permite asignar un color a cada categoria,independientemente del orden en el que esté
+
+```{r}
+# este es un ejemplo de como lo hice en alselmino 2024, no lo corro tal cual porque no es enteramente igual al del dataset de lung, por estar estratificados po una variable numerica
+
+# color.altered="#E31A1C"
+# color.unaltered="#1F78B4"
+# 
+# my.color=c(color.unaltered, color.altered)
+# names(my.color)=c("Unaltered", "Altered")
+# my.color
+
+
+# adaptado a estos datos
+
+#
+color.grupo1="green"
+color.grupo2="purple"
+
+my.color=c(color.grupo1, color.grupo2)
+names(my.color)=c("1", "2") #esto tiene que coincidir con los nombres de la variable strata
+my.color
+
+
+# grafico simple
+ggsurvplot(fit,
+           palette = my.color)
+
+
+
+```
+## unificar todo lo de arriba
+
+
+```{r}
+
+# colores
+color.grupo1="#E31A1C"
+color.grupo2="#1F78B4"
+
+my.color=c(color.grupo1, color.grupo2)
+names(my.color)=c("1", "2") #esto tiene que coincidir con los nombres de la variable strata
+my.color
+
+# fit
+fit <- survfit(Surv(time, status) ~ sex, data = lung)
+
+# estat
+valores.stat=extraer.interesantes.coxph(coxph(Surv(time, status) ~ sex, data = lung))
+
+texto=paste("Cox HR: ",round(valores.stat$HR,2),"\n",
+            "Cox p.val: ",round(valores.stat$p.value,4),"\n",
+            "Log-rank p.val:",round(valores.stat$log.rank,4), sep="" )
+texto
+
+# emprolijar etiquetas
+names(fit$strata)
+x=paste0(as.character(fit$call$formula[[3]]),"=")
+names(fit$strata) <- gsub(x, "", names(fit$strata))
+names(fit$strata)
+
+plot=ggsurvplot(fit,
+                break.x.by = 6,    
+                xlab="Time in months",
+                ylab="Overall survival",
+                surv.scale="percent",
+                tables.y.text = FALSE,
+                ggtheme = theme_bw(),# scale_color_discrete=my.color)
+                palette = my.color,
+                legend.title="Group",
+                # Add risk table
+                risk.table = TRUE,
+                tables.height = 0.2,
+                tables.theme = theme_cleantable(),
+                # risk.table.col = "strata",
+                risk.table.y.text = FALSE,
+                # tables.col="strata", # esto hace que los numeros de la tabla sean del mismo color que las lineas
+                
+)
+
+plot$plot= plot$plot + 
+  ggplot2::annotate("text", x = 0, y = 0.25, label = texto, size = 4, hjust=0, vjust=1)
+
+print(plot)
+# aca hay algo raro que me esta imprimiendo 2 graficos
+
+
+```
+
+
+
+
+
+
+## guardar graficos
