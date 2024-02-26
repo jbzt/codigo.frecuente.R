@@ -1622,7 +1622,7 @@ display: none;
 
 <h1 class="title toc-ignore">Cheats JB</h1>
 <h4 class="author">Juan Bizzotto</h4>
-<h4 class="date">Last compiled on 02 febrero, 2024</h4>
+<h4 class="date">Last compiled on 26 febrero, 2024</h4>
 
 </div>
 
@@ -1677,11 +1677,136 @@ Overflow: <a href="https://stackoverflow.com/questions/14290364/create-heatmap-w
 </div>
 <div id="ggplot" class="section level1">
 <h1>GGplot</h1>
-<div id="asignar-colores-por-un-venctor-con-nombres" class="section level3">
-<h3>asignar colores por un venctor con nombres</h3>
+<div id="volcano-plot-en-ggplot" class="section level3">
+<h3>volcano plot en ggplot</h3>
+<div id="referencias" class="section level4">
+<h4>referencias:</h4>
+<ul>
+<li><p>r_tips/tutorials/dv-volcano_plots_with_ggplot/dv-volcano_plots_with_ggplot.md
+at master · erikaduan/r_tips <a href="https://github.com/erikaduan/r_tips/blob/master/tutorials/dv-volcano_plots_with_ggplot/dv-volcano_plots_with_ggplot.md" class="uri">https://github.com/erikaduan/r_tips/blob/master/tutorials/dv-volcano_plots_with_ggplot/dv-volcano_plots_with_ggplot.md</a></p></li>
+<li><p>Visualization of Volcano Plots in R - Samuel’s Blog <a href="https://samdsblog.netlify.app/post/visualizing-volcano-plots-in-r/" class="uri">https://samdsblog.netlify.app/post/visualizing-volcano-plots-in-r/</a></p></li>
+</ul>
+<p>Ejemplo basado en la referencia de <strong>samdsblog</strong></p>
+<pre class="r"><code># data inventada
+grafico=structure(list(nombre = c(&quot;Angiopoetin.2&quot;, &quot;G.CSF&quot;, &quot;SCF&quot;, &quot;GM.CSF&quot;, 
+&quot;Tenascin.C&quot;, &quot;IFN.gamma&quot;, &quot;BMP.9&quot;, &quot;IL.1.alpha&quot;, &quot;Leptin&quot;, &quot;IL.1.beta&quot;, 
+&quot;IL.2&quot;, &quot;TRAIL&quot;, &quot;IL.4&quot;, &quot;sIL.6R&quot;, &quot;IL.5&quot;, &quot;EGF&quot;, &quot;IL.6&quot;, &quot;Endoglin&quot;, 
+&quot;IL.7&quot;, &quot;Endothelin.1&quot;, &quot;IL.9&quot;, &quot;FGF.2&quot;, &quot;Dkk.1&quot;, &quot;IL.10&quot;, &quot;HGF&quot;, 
+&quot;IL.12.p40&quot;, &quot;IL.12.p70&quot;, &quot;Periostin&quot;, &quot;PIGF.2&quot;, &quot;IL.13&quot;, &quot;IL.15&quot;, 
+&quot;Galectin.1&quot;, &quot;IL.17&quot;, &quot;IP.10&quot;, &quot;KC&quot;, &quot;MCP.1&quot;, &quot;MIP.1.alpha&quot;, 
+&quot;SDF.1&quot;, &quot;MIP.1.beta&quot;, &quot;Osteonectin&quot;, &quot;FGF.23&quot;, &quot;MIP.2&quot;, &quot;Galectin.3&quot;, 
+&quot;RANTES&quot;, &quot;VEGF&quot;, &quot;TNF.alpha&quot;, &quot;HGFR&quot;, &quot;Vitronectin&quot;, &quot;IGF.1&quot;, 
+&quot;MMP.2&quot;, &quot;Osteopontin&quot;, &quot;MMP.9&quot;, &quot;Axl&quot;, &quot;TGFbeta.1&quot;, &quot;TGFbeta.3&quot;, 
+&quot;TGFbeta.2&quot;), p.val = c(0.839225653739129, 0.590331216274014, 
+0.110405888258566, 0.726427295531733, 0.712632870904764, 0.609797293096357, 
+0.791116679604495, 0.924051281290938, 0.625065524381482, 0.164216632209828, 
+0.0374188783270202, 0.253926026382899, 0.00502033890552983, 0.0444988131513101, 
+0.500973981436344, 0.135623397748239, 0.385677256244151, 0.0592602010981502, 
+0.26372607315013, 0.741082397494451, 0.0473399025871028, 0.0807895503656673, 
+0.0460078024864051, 0.252268947025709, 0.0189131478245569, 0.108798850299131, 
+0.0265230280265309, 0.0568692491885416, 0.172952122260311, 0.033878092031299, 
+0.0636308655535189, 0.647343978309613, 0.24783807917475, 0.00461818386311467, 
+0.6805106862445, 0.765356450812079, 0.606535475416779, 0.0042714310750879, 
+0.141301107979996, 0.0678153116263779, 0.00360003777822301, 0.269324261087968, 
+0.143996669034468, 0.000172278830267783, 0.0526939946746104, 
+0.213647361245845, 0.958857640884594, 0.91020693922827, 0.647411858024726, 
+0.218442725468614, 0.187707075647927, 0.162796779100887, 0.27569271077264, 
+0.767878211810357, 0.565229408870377, 0.933523072679823), fold.change = c(1.14462198648667, 
+1.63943467769735, 0.672828326984325, 1.54121687929343, 0.927610425019125, 
+1.28894866621834, 0.901481481481481, 1.02705627705628, 1.12426708672442, 
+0.412400225751834, 1.31049679487179, 0.64589759407773, 0.434742220157919, 
+0.503091983477087, 1.39625167336011, 0.523105380321981, 0.81758345086977, 
+0.427227147661266, 0.413375113383359, 0.969568892645816, 4.68827872634979, 
+0.475721990010142, 0.27665161539576, 0.585392427720923, 0.337235750602087, 
+0.579612685113732, 0.378520604802846, 2.32735849056604, 0.569377990430622, 
+0.598081952920663, 0.173809813709972, 1.07024567788899, 0.625175808720112, 
+0.346467697579009, 0.855351976856316, 0.892391398220917, 0.882838621630843, 
+0.527358897027143, 0.541313320825516, 1.80747522889753, 0.560338335989353, 
+0.547165155160713, 0.755162030398624, 0.336429739414814, 0.0683343502135448, 
+0.540880503144654, 0.967997236542355, 1.05568057686929, 0.84081690089142, 
+1.36532656301803, 1.65575498433849, 0.248127204693699, 0.658866602992678, 
+1.46657726598184, 1.65849949307198, 1.07646565951504), Expression = c(&quot;Unchanged&quot;, 
+&quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, 
+&quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Up-regulated&quot;, 
+&quot;Unchanged&quot;, &quot;Down-regulated&quot;, &quot;Down-regulated&quot;, &quot;Unchanged&quot;, 
+&quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, 
+&quot;Up-regulated&quot;, &quot;Unchanged&quot;, &quot;Down-regulated&quot;, &quot;Unchanged&quot;, &quot;Down-regulated&quot;, 
+&quot;Unchanged&quot;, &quot;Down-regulated&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Down-regulated&quot;, 
+&quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Down-regulated&quot;, &quot;Unchanged&quot;, 
+&quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Down-regulated&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, 
+&quot;Down-regulated&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Down-regulated&quot;, 
+&quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, 
+&quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, &quot;Unchanged&quot;, 
+&quot;Unchanged&quot;, &quot;Unchanged&quot;)), class = &quot;data.frame&quot;, row.names = c(NA, 
+-56L))</code></pre>
+<pre class="r"><code>library(tidyverse)
+library(ggrepel)
+
+# para colorear segun el cambio
+grafico &lt;- grafico %&gt;% 
+  mutate(
+    Expression = case_when(fold.change &gt; 1 &amp; p.val &lt;= 0.05 ~ &quot;Up-regulated&quot;,
+                           fold.change &lt; 1 &amp; p.val &lt;= 0.05 ~ &quot;Down-regulated&quot;,
+                           TRUE ~ &quot;Unchanged&quot;)
+  )
+
+top=10
+# paraa agregar labels
+top_genes &lt;- bind_rows(
+  grafico %&gt;% 
+    filter(Expression == &#39;Up-regulated&#39;),
+  grafico %&gt;% 
+    filter(Expression == &#39;Down-regulated&#39;),
+  grafico %&gt;% 
+    filter(Expression == &#39;Unchanged&#39;) %&gt;% 
+    arrange(desc(abs(log2(fold.change)))) %&gt;% 
+    head(top),
+  grafico %&gt;% 
+    filter(Expression == &#39;Unchanged&#39;) %&gt;% 
+    arrange(p.val) %&gt;% 
+    head(top)
+)
+
+
+# en caso de tener labels repetidas
+top_genes=top_genes[!duplicated(top_genes$nombre),]
+
+# graficar
+ggplot(grafico, aes(x=log2(fold.change), y=-log10(p.val)))+
+  geom_point()+
+  # geom_vline(xintercept = c(-0.6, 0.6), col = &quot;gray&quot;, linetype = &#39;dashed&#39;) +
+  geom_vline(xintercept = 0, col = &quot;gray&quot;, linetype = &#39;dashed&#39;) +
+  geom_hline(yintercept = -log10(0.05), col = &quot;gray&quot;, linetype = &#39;dashed&#39;) + 
+  geom_point(aes(color = Expression))  +
+  xlab(expression(&quot;log&quot;[2]*&quot;FC&quot;)) + 
+  ylab(expression(&quot;-log&quot;[10]*&quot;p-val&quot;))+
+  scale_color_manual(values = c(&quot;dodgerblue3&quot;, &quot;gray50&quot;, &quot;firebrick3&quot;)) +
+  guides(colour = guide_legend(override.aes = list(size=1.5))) +
+  geom_label_repel(data = top_genes,
+                   mapping = aes(x=log2(fold.change), y=-log10(p.val), label=nombre),
+                   size = 3)+
+  ggtitle(&quot;Right: Tratamiento vs Control&quot;)</code></pre>
+</div>
+</div>
+<div id="grafico-con-perros-gatos-cats-dogs" class="section level3">
+<h3>grafico con perros gatos cats dogs</h3>
+<p>Gatos en ggplot2 con ggcats | R CHARTS <a href="https://r-charts.com/es/miscelanea/ggcats/" class="uri">https://r-charts.com/es/miscelanea/ggcats/</a></p>
+</div>
+<div id="asignar-colores-vector-con-nombres-named-color-named-vector" class="section level3">
+<h3>asignar colores vector con nombres / named color / named vector</h3>
 <p>para evitar cierta aleatoriedad de la hora de agregar colores a
 factores o caracteres, esta bueno directamente hacer un vetor con
 nombres que denpues matchee nombre a color</p>
+<ul>
+<li>stat.ubc.ca/~jenny/STAT545A/block17_colorsGgplot2Qualitative.html <a href="https://www.stat.ubc.ca/~jenny/STAT545A/block17_colorsGgplot2Qualitative.html" class="uri">https://www.stat.ubc.ca/~jenny/STAT545A/block17_colorsGgplot2Qualitative.html</a></li>
+<li>r - Can someone explain the behaviour of named vectors in manual
+ggplot scales? - Stack Overflow: <a href="https://stackoverflow.com/questions/40426663/can-someone-explain-the-behaviour-of-named-vectors-in-manual-ggplot-scales" class="uri">https://stackoverflow.com/questions/40426663/can-someone-explain-the-behaviour-of-named-vectors-in-manual-ggplot-scales</a></li>
+<li>Using Named Colors with ggplot2 - John Quensen: <a href="https://john-quensen.com/graphics/named-colors-with-ggplot2/" class="uri">https://john-quensen.com/graphics/named-colors-with-ggplot2/</a></li>
+<li>An example of using a named color vector to set colors in ggplot2:
+<a href="https://gist.github.com/mmparker/6315074" class="uri">https://gist.github.com/mmparker/6315074</a></li>
+<li>r - ggplot2: Fix colors to factor levels - Stack Overflow: <a href="https://stackoverflow.com/questions/43440068/ggplot2-fix-colors-to-factor-levels" class="uri">https://stackoverflow.com/questions/43440068/ggplot2-fix-colors-to-factor-levels</a></li>
+<li>Custom colour palettes for {ggplot2} | R-bloggers: <a href="https://www.r-bloggers.com/2022/06/custom-colour-palettes-for-ggplot2/" class="uri">https://www.r-bloggers.com/2022/06/custom-colour-palettes-for-ggplot2/</a></li>
+</ul>
 <p><strong>eje x arriba, on top:</strong></p>
 <p>r - Putting x-axis at top of ggplot2 chart - Stack Overflow: <a href="https://stackoverflow.com/questions/26838005/putting-x-axis-at-top-of-ggplot2-chart" class="uri">https://stackoverflow.com/questions/26838005/putting-x-axis-at-top-of-ggplot2-chart</a></p>
 <pre class="r"><code>scale_x_discrete(position = &quot;top&quot;) </code></pre>
@@ -1723,8 +1848,42 @@ Biomart in R :<a href="https://www.biostars.org/p/147351/" class="uri">https://w
 </div>
 <div id="quarto" class="section level1">
 <h1>Quarto</h1>
-<div id="agregar-una-tabla" class="section level2">
-<h2>agregar una tabla</h2>
+<div id="formato-en-general-en-quarto" class="section level3">
+<h3>formato en general en quarto</h3>
+<p>Quarto – Using R <a href="https://quarto.org/docs/computations/r.html" class="uri">https://quarto.org/docs/computations/r.html</a></p>
+<p>Quarto – Execution Options <a href="https://quarto.org/docs/computations/execution-options.html" class="uri">https://quarto.org/docs/computations/execution-options.html</a></p>
+<p>How can I specify global and local chunk options for a quarto pdf
+book? - Stack Overflow <a href="https://stackoverflow.com/questions/73264233/how-can-i-specify-global-and-local-chunk-options-for-a-quarto-pdf-book" class="uri">https://stackoverflow.com/questions/73264233/how-can-i-specify-global-and-local-chunk-options-for-a-quarto-pdf-book</a></p>
+</div>
+<div id="cambiar-tamaño-texto-en-slide-o-presentacion" class="section level3">
+<h3>cambiar tamaño texto en slide o presentacion</h3>
+<p>Make Text Smaller in a Section / List · quarto-dev/quarto-cli ·
+Discussion #3696 <a href="https://github.com/quarto-dev/quarto-cli/discussions/3696" class="uri">https://github.com/quarto-dev/quarto-cli/discussions/3696</a></p>
+<pre class="r"><code>---
+title: &quot;Untitled&quot;
+format: revealjs
+---
+
+## Slide
+
+### H1
+
+::: {style=&quot;font-size: 50%;&quot;}
+
+- Generating a random number.
+- Generating array of samples.
+- Visualizing data.
+
+:::
+
+### H2
+
+- Generating a random number.
+- Generating array of samples.
+- Visualizing data.</code></pre>
+</div>
+<div id="agregar-una-tabla" class="section level3">
+<h3>agregar una tabla</h3>
 <p>Si al tengo en el enviroment, y quiero que me la renderice, las
 opciones son las que estan acá</p>
 <ul>
@@ -1747,6 +1906,12 @@ kable(tabla) %&gt;%
 </div>
 <div id="markdown" class="section level1">
 <h1>MArkdown</h1>
+<div id="no-evaluar-los-chunks" class="section level3">
+<h3>no evaluar los chunks</h3>
+<p>r - Is there a global command line knit option as eval=FALSE for all
+chunks? - Stack Overflow <a href="https://stackoverflow.com/questions/68031768/is-there-a-global-command-line-knit-option-as-eval-false-for-all-chunks" class="uri">https://stackoverflow.com/questions/68031768/is-there-a-global-command-line-knit-option-as-eval-false-for-all-chunks</a></p>
+<pre class="r"><code>knitr::opts_chunk$set(eval = FALSE)</code></pre>
+</div>
 <div id="agregar-fecha" class="section level3">
 <h3>agregar fecha</h3>
 <p>agregar la fecha, date, r - YAML current date in rmarkdown - Stack
@@ -1756,6 +1921,43 @@ Overflow <a href="https://stackoverflow.com/questions/23449319/yaml-current-date
 <pre class="r"><code>date: &quot;`r Sys.Date()`&quot;
 date: &quot;`r format(Sys.time(), &#39;%d %B, %Y&#39;)`&quot;
 date: &quot;Last compiled on `r format(Sys.time(), &#39;%d %B, %Y&#39;)`&quot;</code></pre>
+</div>
+</div>
+<div id="survival" class="section level1">
+<h1>Survival</h1>
+<div id="ggsurvplot" class="section level2">
+<h2>GGsurvplot</h2>
+<div id="guardar-los-graficos-de-ggsurvplot" class="section level3">
+<h3>guardar los graficos de GGsurvplot</h3>
+<p>usualmente es medio problematico guardar los datos que escupe
+ggsurvplot</p>
+<p>Metodo 1: consiste en crear una funcion que o hace compatible con
+GGsave. Simpleente se ejecuta esta funcion una vez, y despues cuando
+hacemos el ggsave, funciona fuente: <a href="https://stackoverflow.com/questions/75071135/kaplan-meier-curve-with-ggsurvplot-with-transparent-background" class="uri">https://stackoverflow.com/questions/75071135/kaplan-meier-curve-with-ggsurvplot-with-transparent-background</a></p>
+<pre class="r"><code>grid.draw.ggsurvplot &lt;- function(x) survminer:::print.ggsurvplot(x, newpage = FALSE) # esto se corre solo una vez para que la funcion este en el enviroment
+
+
+ggsave(&quot;test_survplot.png&quot;, surv_plot_out)  </code></pre>
+<p>metodo 2: imprimir el plot</p>
+<p>fuente: <a href="https://stackoverflow.com/questions/48631144/ggsurvplot-save-output-with-correct-dimensions" class="uri">https://stackoverflow.com/questions/48631144/ggsurvplot-save-output-with-correct-dimensions</a></p>
+<pre class="r"><code># forma A
+ggsave(&quot;myplot.jpg&quot;, plot = print(plot))
+
+# forma B, incompleta por ahora
+
+png()
+print(plot)
+dev.off()</code></pre>
+</div>
+</div>
+</div>
+<div id="cosas-hechas-o-resueltas" class="section level1">
+<h1>cosas hechas o resueltas</h1>
+<div id="comparaciones-pro-post-adt-crpc" class="section level2">
+<h2>comparaciones pro post ADT / CRPC</h2>
+<p>esto lo hice en muchos lugares, incluido tesis, pero la version mas
+prolija CREO que es la que dejé en proyectos r&gt;ADT_santi y el archivo
+es <strong>analisis_general_pre_y_post_ADT</strong></p>
 </div>
 </div>
 

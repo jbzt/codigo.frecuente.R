@@ -85,15 +85,17 @@ r - Create heatmap with values from matrix in ggplot2 - Stack Overflow:
 # GGplot
 
 ### volcano plot en ggplot
-#### referencias:
-* r_tips/tutorials/dv-volcano_plots_with_ggplot/dv-volcano_plots_with_ggplot.md at master · erikaduan/r_tips
-https://github.com/erikaduan/r_tips/blob/master/tutorials/dv-volcano_plots_with_ggplot/dv-volcano_plots_with_ggplot.md
 
-* Visualization of Volcano Plots in R - Samuel's Blog
-https://samdsblog.netlify.app/post/visualizing-volcano-plots-in-r/
+#### referencias:
+
+-   r_tips/tutorials/dv-volcano_plots_with_ggplot/dv-volcano_plots_with_ggplot.md
+    at master · erikaduan/r_tips
+    <https://github.com/erikaduan/r_tips/blob/master/tutorials/dv-volcano_plots_with_ggplot/dv-volcano_plots_with_ggplot.md>
+
+-   Visualization of Volcano Plots in R - Samuel's Blog
+    <https://samdsblog.netlify.app/post/visualizing-volcano-plots-in-r/>
 
 Ejemplo basado en la referencia de **samdsblog**
-
 
 ```{r eval=FALSE}
 # data inventada
@@ -200,13 +202,10 @@ ggplot(grafico, aes(x=log2(fold.change), y=-log10(p.val)))+
   ggtitle("Right: Tratamiento vs Control")
 ```
 
-
-
-
 ### grafico con perros gatos cats dogs
-Gatos en ggplot2 con ggcats | R CHARTS
-https://r-charts.com/es/miscelanea/ggcats/
 
+Gatos en ggplot2 con ggcats \| R CHARTS
+<https://r-charts.com/es/miscelanea/ggcats/>
 
 ### asignar colores vector con nombres / named color / named vector
 
@@ -284,7 +283,51 @@ Biomart in R :<https://www.biostars.org/p/147351/>
 
 # Quarto
 
-## agregar una tabla
+### formato en general en quarto
+
+Quarto – Using R
+https://quarto.org/docs/computations/r.html
+
+Quarto – Execution Options
+https://quarto.org/docs/computations/execution-options.html
+
+How can I specify global and local chunk options for a quarto pdf book? - Stack Overflow
+https://stackoverflow.com/questions/73264233/how-can-i-specify-global-and-local-chunk-options-for-a-quarto-pdf-book
+
+
+
+### cambiar tamaño texto en slide o presentacion
+
+Make Text Smaller in a Section / List · quarto-dev/quarto-cli ·
+Discussion #3696
+<https://github.com/quarto-dev/quarto-cli/discussions/3696>
+
+```{r}
+---
+title: "Untitled"
+format: revealjs
+---
+
+## Slide
+
+### H1
+
+::: {style="font-size: 50%;"}
+
+- Generating a random number.
+- Generating array of samples.
+- Visualizing data.
+
+:::
+
+### H2
+
+- Generating a random number.
+- Generating array of samples.
+- Visualizing data.
+```
+
+### agregar una tabla
 
 Si al tengo en el enviroment, y quiero que me la renderice, las opciones
 son las que estan acá
@@ -338,3 +381,45 @@ date: "`r Sys.Date()`"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 ```
+
+# Survival
+
+## GGsurvplot
+
+### guardar los graficos de GGsurvplot
+
+usualmente es medio problematico guardar los datos que escupe ggsurvplot
+
+Metodo 1: consiste en crear una funcion que o hace compatible con
+GGsave. Simpleente se ejecuta esta funcion una vez, y despues cuando
+hacemos el ggsave, funciona fuente:
+<https://stackoverflow.com/questions/75071135/kaplan-meier-curve-with-ggsurvplot-with-transparent-background>
+
+```{r}
+grid.draw.ggsurvplot <- function(x) survminer:::print.ggsurvplot(x, newpage = FALSE) # esto se corre solo una vez para que la funcion este en el enviroment
+
+
+ggsave("test_survplot.png", surv_plot_out)  
+```
+
+metodo 2: imprimir el plot
+
+fuente:
+<https://stackoverflow.com/questions/48631144/ggsurvplot-save-output-with-correct-dimensions>
+
+```{r}
+
+# forma A
+ggsave("myplot.jpg", plot = print(plot))
+
+# forma B, incompleta por ahora
+
+png()
+print(plot)
+dev.off()
+```
+
+# cosas hechas o resueltas
+
+## comparaciones pro post ADT / CRPC
+esto lo hice en muchos lugares, incluido tesis, pero la version mas prolija CREO que es la que dejé en proyectos r>ADT_santi y el archivo es **analisis_general_pre_y_post_ADT**
